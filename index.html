@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Packing Planner ✈️</title>
+<title>Travel Packing App ✈️</title>
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
@@ -10,162 +10,266 @@
 body {
   margin: 0;
   font-family: Inter, Arial;
-  background: linear-gradient(135deg, #fff1f6, #eef6ff);
-  color: #333;
+  overflow-x: hidden;
+  background: linear-gradient(#dff3ff, #fff0f6);
 }
 
-header {
-  text-align: center;
-  padding: 18px;
-  font-size: 20px;
-  font-weight: 600;
+/* ☁️ clouds */
+.clouds {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  overflow: hidden;
 }
 
-.sub {
-  font-size: 12px;
-  opacity: 0.7;
-  margin-top: 4px;
+.cloud {
+  position: absolute;
+  background: white;
+  border-radius: 100px;
+  opacity: 0.6;
+  animation: float 20s linear infinite;
 }
 
-.container {
+.cloud:before,
+.cloud:after {
+  content: "";
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+}
+
+@keyframes float {
+  from { transform: translateX(-200px); }
+  to { transform: translateX(120vw); }
+}
+
+/* layout */
+.app {
+  position: relative;
+  z-index: 1;
   display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  padding: 12px;
-  justify-content: center;
+  height: 100vh;
+}
+
+/* sidebar */
+.panel {
+  width: 30%;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+/* suitcase */
+.suitcase {
+  width: 70%;
+  padding: 15px;
 }
 
 /* cards */
 .card {
-  background: white;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(6px);
   border-radius: 16px;
-  padding: 12px;
-  width: 45%;
-  min-width: 160px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-}
-
-/* items */
-.item {
-  background: #f3f4f6;
-  padding: 8px;
-  margin: 6px 0;
-  border-radius: 12px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.item:hover {
-  transform: scale(1.02);
-  background: #e8f0ff;
-}
-
-.selected {
-  outline: 2px solid #7aa7ff;
-  background: #e7f0ff;
-}
-
-/* drop zones */
-.slot {
-  min-height: 90px;
-  border: 2px dashed #cfcfcf;
-  border-radius: 14px;
-  padding: 8px;
-  background: #fafafa;
+  padding: 10px;
+  margin-bottom: 10px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
 }
 
 h3 {
+  margin: 5px 0;
   font-size: 14px;
-  margin: 6px 0;
 }
+
+/* CLOTHING BLOCKS */
+.item {
+  padding: 10px;
+  margin: 6px 0;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #222;
+  transition: 0.2s;
+}
+
+/* colored “fabric” styles */
+.shirt { background: #ffd6e7; }
+.pants { background: #d6e7ff; }
+.shorts { background: #fff3b0; }
+.hoodie { background: #d9f2ff; }
+.toiletry { background: #e6d6ff; }
+
+/* suitcase area */
+.box {
+  background: #ffd6e7;
+  border-radius: 18px;
+  height: 90%;
+  padding: 10px;
+  position: relative;
+}
+
+/* space meter */
+.bar {
+  height: 12px;
+  background: #eee;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #ff9ccf, #7ad1ff);
+  transition: width 0.3s;
+}
+
+/* packed items */
+.packed {
+  padding: 8px;
+  margin: 6px;
+  border-radius: 10px;
+  font-size: 12px;
+  cursor: pointer;
+  animation: pop 0.3s ease;
+}
+
+@keyframes pop {
+  0% { transform: scale(0.7); }
+  70% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+/* fold vs roll */
+.folded {
+  width: 90%;
+}
+
+.rolled {
+  width: 50%;
+  border-radius: 999px;
+}
+
+/* buttons */
+button {
+  border: none;
+  padding: 6px 10px;
+  border-radius: 10px;
+  margin: 5px 0;
+  cursor: pointer;
+  background: white;
+  box-shadow: 0 5px 12px rgba(0,0,0,0.08);
+  font-size: 12px;
+}
+
 </style>
 </head>
 
 <body>
 
-<header>
-✈️ Packing Planner
-<div class="sub">tap items → tap bag → build your travel aesthetic</div>
-</header>
+<div class="clouds" id="clouds"></div>
 
-<div class="container">
+<div class="app">
 
-<!-- CLOTHES -->
+<!-- LEFT PANEL -->
+<div class="panel">
+
 <div class="card">
 <h3>👕 Clothes</h3>
 
-<div class="item">T-Shirt</div>
-<div class="item">Pants</div>
-<div class="item">Shorts</div>
-<div class="item">Hoodie</div>
-<div class="item">Socks</div>
-<div class="item">Underwear</div>
+<div class="item shirt" data-type="shirt">T-Shirt</div>
+<div class="item pants" data-type="pants">Pants</div>
+<div class="item shorts" data-type="shorts">Shorts</div>
+<div class="item hoodie" data-type="hoodie">Hoodie</div>
+
+</div>
+
+<div class="card">
+<h3>🎒 Carry-On</h3>
+
+<div class="item toiletry">Headphones</div>
+<div class="item toiletry">Charger</div>
+<div class="item toiletry">Book</div>
+
+</div>
+
+<div class="card">
+<h3>🧴 Toiletries</h3>
+
+<div class="item toiletry">Toothbrush</div>
+<div class="item toiletry">Face Wash</div>
+<div class="item toiletry">Lotion</div>
+
+</div>
 
 </div>
 
 <!-- SUITCASE -->
-<div class="card">
+<div class="suitcase">
+
 <h3>🧳 Suitcase</h3>
-<div class="slot" id="suitcase"></div>
-</div>
 
-<!-- CARRY ON -->
-<div class="card">
-<h3>🎒 Carry-On</h3>
+<div class="bar"><div class="fill" id="fill"></div></div>
 
-<div class="item">🎧 Headphones</div>
-<div class="item">🔌 Charger</div>
-<div class="item">📱 Phone cable</div>
-<div class="item">📖 Book</div>
-<div class="item">🍫 Snacks</div>
-<div class="item">🧴 Hand sanitizer</div>
+<div class="box" id="box"></div>
 
-<div class="slot" id="carry"></div>
-</div>
-
-<!-- TOILETRIES -->
-<div class="card">
-<h3>🧴 Toiletry Bag</h3>
-
-<div class="item">🪥 Toothbrush</div>
-<div class="item">🧼 Face wash</div>
-<div class="item">🧴 Lotion</div>
-<div class="item">💄 Lip balm</div>
-<div class="item">🪮 Hairbrush</div>
-<div class="item">🧴 Deodorant</div>
-
-<div class="slot" id="toiletries"></div>
 </div>
 
 </div>
 
 <script>
 
-let selected = null;
+let mode = "fold";
 
-// select item
 document.querySelectorAll(".item").forEach(el => {
   el.addEventListener("click", () => {
-    document.querySelectorAll(".item").forEach(i => i.classList.remove("selected"));
-    selected = el;
-    el.classList.add("selected");
-  });
-});
-
-// place item
-document.querySelectorAll(".slot").forEach(slot => {
-  slot.addEventListener("click", () => {
-
-    if (!selected) return;
 
     const clone = document.createElement("div");
-    clone.className = "item";
-    clone.innerText = selected.innerText;
+    clone.className = "packed " + (el.classList[1] || "");
 
-    slot.appendChild(clone);
+    clone.innerText = el.innerText;
+
+    clone.dataset.size = mode;
+
+    if (mode === "roll") {
+      clone.classList.add("rolled");
+    } else {
+      clone.classList.add("folded");
+    }
+
+    // ❌ remove on click
+    clone.onclick = () => {
+      clone.remove();
+      update();
+    };
+
+    document.getElementById("box").appendChild(clone);
+    update();
   });
 });
+
+function update() {
+  const items = document.querySelectorAll(".packed").length;
+  const percent = Math.min(100, items * 10);
+  document.getElementById("fill").style.width = percent + "%";
+}
+
+/* clouds */
+function makeClouds() {
+  const c = document.getElementById("clouds");
+
+  for (let i = 0; i < 6; i++) {
+    let d = document.createElement("div");
+    d.className = "cloud";
+    d.style.top = Math.random() * 100 + "vh";
+    d.style.left = Math.random() * 100 + "vw";
+    d.style.width = (80 + Math.random() * 80) + "px";
+    d.style.height = (40 + Math.random() * 40) + "px";
+    d.style.animationDuration = (20 + Math.random() * 20) + "s";
+    c.appendChild(d);
+  }
+}
+
+makeClouds();
 
 </script>
 
