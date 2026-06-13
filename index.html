@@ -2,215 +2,293 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Travel Packing App ✈️</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Packing Quest ✈️</title>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
 
-body {
-  margin: 0;
-  font-family: Inter, Arial;
-  overflow-x: hidden;
-  background: linear-gradient(#dff3ff, #fff0f6);
+*{box-sizing:border-box;font-family:Inter,sans-serif;}
+
+body{
+margin:0;
+background:linear-gradient(#dff4ff,#fff0f8);
+overflow-x:hidden;
 }
 
-/* ☁️ clouds */
-.clouds {
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-  overflow: hidden;
+/* clouds */
+.sky{
+position:fixed;
+inset:0;
+pointer-events:none;
+overflow:hidden;
+z-index:0;
 }
 
-.cloud {
-  position: absolute;
-  background: white;
-  border-radius: 100px;
-  opacity: 0.6;
-  animation: float 20s linear infinite;
+.cloud{
+position:absolute;
+background:white;
+opacity:.6;
+border-radius:999px;
+animation:drift linear infinite;
 }
 
-.cloud:before,
-.cloud:after {
-  content: "";
-  position: absolute;
-  background: white;
-  border-radius: 50%;
-}
-
-@keyframes float {
-  from { transform: translateX(-200px); }
-  to { transform: translateX(120vw); }
+@keyframes drift{
+from{transform:translateX(-200px);}
+to{transform:translateX(120vw);}
 }
 
 /* layout */
-.app {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  height: 100vh;
+.app{
+position:relative;
+z-index:1;
+max-width:1200px;
+margin:auto;
+padding:16px;
 }
 
-/* sidebar */
-.panel {
-  width: 30%;
-  padding: 10px;
-  overflow-y: auto;
+.hero{
+text-align:center;
+margin-bottom:10px;
 }
 
-/* suitcase */
-.suitcase {
-  width: 70%;
-  padding: 15px;
+.hero h1{margin:0;}
+
+.layout{
+display:grid;
+grid-template-columns:320px 1fr;
+gap:14px;
+}
+
+@media(max-width:900px){
+.layout{grid-template-columns:1fr;}
 }
 
 /* cards */
-.card {
-  background: rgba(255,255,255,0.85);
-  backdrop-filter: blur(6px);
-  border-radius: 16px;
-  padding: 10px;
-  margin-bottom: 10px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+.card{
+background:rgba(255,255,255,.85);
+backdrop-filter:blur(10px);
+border-radius:18px;
+padding:12px;
+box-shadow:0 10px 25px rgba(0,0,0,.08);
+margin-bottom:10px;
 }
 
-h3 {
-  margin: 5px 0;
-  font-size: 14px;
+/* items */
+.item{
+padding:10px;
+border-radius:12px;
+margin:6px 0;
+cursor:pointer;
+font-weight:600;
+transition:.2s;
 }
 
-/* CLOTHING BLOCKS */
-.item {
-  padding: 10px;
-  margin: 6px 0;
-  border-radius: 12px;
-  cursor: pointer;
-  font-size: 13px;
-  color: #222;
-  transition: 0.2s;
+.item:hover{transform:scale(1.02);}
+
+.selected{
+outline:3px solid #ff8ec7;
 }
 
-/* colored “fabric” styles */
-.shirt { background: #ffd6e7; }
-.pants { background: #d6e7ff; }
-.shorts { background: #fff3b0; }
-.hoodie { background: #d9f2ff; }
-.toiletry { background: #e6d6ff; }
-
-/* suitcase area */
-.box {
-  background: #ffd6e7;
-  border-radius: 18px;
-  height: 90%;
-  padding: 10px;
-  position: relative;
-}
-
-/* space meter */
-.bar {
-  height: 12px;
-  background: #eee;
-  border-radius: 999px;
-  overflow: hidden;
-  margin-bottom: 10px;
-}
-
-.fill {
-  height: 100%;
-  width: 0%;
-  background: linear-gradient(90deg, #ff9ccf, #7ad1ff);
-  transition: width 0.3s;
-}
-
-/* packed items */
-.packed {
-  padding: 8px;
-  margin: 6px;
-  border-radius: 10px;
-  font-size: 12px;
-  cursor: pointer;
-  animation: pop 0.3s ease;
-}
-
-@keyframes pop {
-  0% { transform: scale(0.7); }
-  70% { transform: scale(1.1); }
-  100% { transform: scale(1); }
-}
-
-/* fold vs roll */
-.folded {
-  width: 90%;
-}
-
-.rolled {
-  width: 50%;
-  border-radius: 999px;
-}
+.shirt{background:#ffd6e8;}
+.pants{background:#dbe8ff;}
+.shorts{background:#fff2b8;}
+.hoodie{background:#dff6ff;}
+.tech{background:#ffe4d8;}
+.toiletry{background:#e7ffe7;}
 
 /* buttons */
-button {
-  border: none;
-  padding: 6px 10px;
-  border-radius: 10px;
-  margin: 5px 0;
-  cursor: pointer;
-  background: white;
-  box-shadow: 0 5px 12px rgba(0,0,0,0.08);
-  font-size: 12px;
+button{
+border:none;
+padding:8px 10px;
+border-radius:10px;
+cursor:pointer;
+font-weight:600;
+margin:3px;
 }
 
+.active{background:#ffb6d9;}
+
+/* boards */
+.boards{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:12px;
+}
+
+@media(max-width:900px){
+.boards{grid-template-columns:1fr;}
+}
+
+.board{
+background:#fff7fb;
+border-radius:16px;
+padding:10px;
+min-height:260px;
+}
+
+/* pieces */
+.piece{
+padding:8px;
+margin:5px;
+border-radius:10px;
+font-size:12px;
+cursor:pointer;
+animation:pop .25s ease;
+user-select:none;
+}
+
+@keyframes pop{
+0%{transform:scale(.6);}
+70%{transform:scale(1.1);}
+100%{transform:scale(1);}
+}
+
+.fold{width:90px;}
+.roll{width:45px;border-radius:999px;}
+
+/* meter */
+.meter{
+height:12px;
+background:#eee;
+border-radius:999px;
+overflow:hidden;
+}
+
+.fill{
+height:100%;
+width:0%;
+background:linear-gradient(90deg,#ff9ccf,#8fd3ff);
+transition:.3s;
+}
+
+/* overlay screens */
+.screen{
+position:fixed;
+inset:0;
+background:rgba(255,255,255,.9);
+display:flex;
+align-items:center;
+justify-content:center;
+flex-direction:column;
+z-index:10;
+}
+
+.hidden{display:none;}
+
+.big{
+font-size:28px;
+font-weight:700;
+}
+
+.small{
+opacity:.7;
+margin-top:6px;
+text-align:center;
+max-width:300px;
+}
+
+/* confetti */
+.confetti{
+position:fixed;
+inset:0;
+pointer-events:none;
+z-index:20;
+}
+
+.p{
+position:absolute;
+width:8px;
+height:10px;
+animation:fall 1.5s linear forwards;
+}
+
+@keyframes fall{
+to{transform:translateY(100vh) rotate(360deg);opacity:0;}
+}
 </style>
 </head>
 
 <body>
 
-<div class="clouds" id="clouds"></div>
+<div class="sky" id="sky"></div>
+<div class="confetti" id="confetti"></div>
+
+<!-- START SCREEN -->
+<div class="screen" id="startScreen">
+<div class="big">✈️ Packing Quest</div>
+<div class="small">Choose your mode</div>
+<br>
+
+<button onclick="startGame('road')">🚗 Road Trip Mode</button>
+<button onclick="startGame('random')">🎲 Challenge Mode</button>
+</div>
+
+<!-- END SCREEN -->
+<div class="screen hidden" id="endScreen">
+<div class="big" id="resultTitle">You Win!</div>
+<div class="small" id="resultText"></div>
+<br>
+<button onclick="location.reload()">Play Again</button>
+</div>
 
 <div class="app">
 
-<!-- LEFT PANEL -->
-<div class="panel">
+<div class="hero">
+<h1>🧳 Packing Quest</h1>
+<p id="challengeText">Loading challenge...</p>
+</div>
+
+<div class="layout">
+
+<!-- LEFT -->
+<div>
 
 <div class="card">
-<h3>👕 Clothes</h3>
+<h3>Items</h3>
 
-<div class="item shirt" data-type="shirt">T-Shirt</div>
-<div class="item pants" data-type="pants">Pants</div>
-<div class="item shorts" data-type="shorts">Shorts</div>
-<div class="item hoodie" data-type="hoodie">Hoodie</div>
-
-</div>
-
-<div class="card">
-<h3>🎒 Carry-On</h3>
-
-<div class="item toiletry">Headphones</div>
-<div class="item toiletry">Charger</div>
-<div class="item toiletry">Book</div>
+<div class="item shirt">👕 T-Shirt</div>
+<div class="item pants">👖 Pants</div>
+<div class="item shorts">🩳 Shorts</div>
+<div class="item hoodie">🧥 Hoodie</div>
+<div class="item tech">🎧 Headphones</div>
+<div class="item tech">🔌 Charger</div>
+<div class="item toiletry">🪥 Toothbrush</div>
 
 </div>
 
 <div class="card">
-<h3>🧴 Toiletries</h3>
+<h3>Mode</h3>
+<button id="foldBtn" class="active">Fold 📦</button>
+<button id="rollBtn">Roll 🌀</button>
+</div>
 
-<div class="item toiletry">Toothbrush</div>
-<div class="item toiletry">Face Wash</div>
-<div class="item toiletry">Lotion</div>
-
+<div class="card">
+<h3>Space</h3>
+<div class="meter"><div class="fill" id="fill"></div></div>
+<p id="spaceText">0 / 30</p>
 </div>
 
 </div>
 
-<!-- SUITCASE -->
-<div class="suitcase">
+<!-- RIGHT -->
+<div class="card">
 
+<div class="boards">
+
+<div class="board" id="suitcase">
 <h3>🧳 Suitcase</h3>
+</div>
 
-<div class="bar"><div class="fill" id="fill"></div></div>
+<div class="board" id="carry">
+<h3>🎒 Carry-On</h3>
+</div>
 
-<div class="box" id="box"></div>
+<div class="board" id="toiletries">
+<h3>🧴 Toiletries</h3>
+</div>
+
+</div>
 
 </div>
 
@@ -218,58 +296,135 @@ button {
 
 <script>
 
-let mode = "fold";
+/* clouds */
+for(let i=0;i<8;i++){
+const c=document.createElement("div");
+c.className="cloud";
+c.style.width=(80+Math.random()*120)+"px";
+c.style.height=(40+Math.random()*30)+"px";
+c.style.top=(Math.random()*90)+"vh";
+c.style.left=(-200-Math.random()*400)+"px";
+c.style.animationDuration=(20+Math.random()*20)+"s";
+c.style.animationDelay=(-Math.random()*20)+"s";
+document.getElementById("sky").appendChild(c);
+}
 
-document.querySelectorAll(".item").forEach(el => {
-  el.addEventListener("click", () => {
+/* GAME STATE */
+let mode="fold";
+let spaces=0;
+let essentials=new Set();
+let gameMode="road";
 
-    const clone = document.createElement("div");
-    clone.className = "packed " + (el.classList[1] || "");
+const required=["🔌 Charger","🎧 Headphones","🪥 Toothbrush"];
 
-    clone.innerText = el.innerText;
+/* challenges */
+const challenges=[
+"3-day Road Trip 🚗",
+"Airport Carry-On Only ✈️",
+"Rainy Weekend Getaway 🌧️",
+"Beach Trip 🌴"
+];
 
-    clone.dataset.size = mode;
+function startGame(type){
+gameMode=type;
+document.getElementById("startScreen").classList.add("hidden");
 
-    if (mode === "roll") {
-      clone.classList.add("rolled");
-    } else {
-      clone.classList.add("folded");
-    }
+document.getElementById("challengeText").innerText=
+type==="road"
+?"🚗 Road Trip: Pack smart and balanced!"
+:"🎲 Challenge: "+challenges[Math.floor(Math.random()*challenges.length)];
+}
 
-    // ❌ remove on click
-    clone.onclick = () => {
-      clone.remove();
-      update();
-    };
+/* mode buttons */
+document.getElementById("foldBtn").onclick=()=>{
+mode="fold";
+document.getElementById("foldBtn").classList.add("active");
+document.getElementById("rollBtn").classList.remove("active");
+};
 
-    document.getElementById("box").appendChild(clone);
-    update();
-  });
+document.getElementById("rollBtn").onclick=()=>{
+mode="roll";
+document.getElementById("rollBtn").classList.add("active");
+document.getElementById("foldBtn").classList.remove("active");
+};
+
+/* item select */
+document.querySelectorAll(".item").forEach(it=>{
+it.onclick=()=>selected=it;
 });
 
-function update() {
-  const items = document.querySelectorAll(".packed").length;
-  const percent = Math.min(100, items * 10);
-  document.getElementById("fill").style.width = percent + "%";
+let selected=null;
+
+/* boards */
+document.querySelectorAll(".board").forEach(board=>{
+board.addEventListener("click",()=>{
+
+if(!selected)return;
+
+const piece=document.createElement("div");
+piece.className="piece "+selected.classList[1]+" "+mode;
+piece.innerText=selected.innerText;
+
+const cost=mode==="fold"?2:1;
+spaces+=cost;
+
+if(required.includes(selected.innerText)){
+essentials.add(selected.innerText);
 }
 
-/* clouds */
-function makeClouds() {
-  const c = document.getElementById("clouds");
+piece.onclick=(e)=>{
+e.stopPropagation();
+spaces-=cost;
+piece.remove();
+update();
+};
 
-  for (let i = 0; i < 6; i++) {
-    let d = document.createElement("div");
-    d.className = "cloud";
-    d.style.top = Math.random() * 100 + "vh";
-    d.style.left = Math.random() * 100 + "vw";
-    d.style.width = (80 + Math.random() * 80) + "px";
-    d.style.height = (40 + Math.random() * 40) + "px";
-    d.style.animationDuration = (20 + Math.random() * 20) + "s";
-    c.appendChild(d);
-  }
+board.appendChild(piece);
+
+update();
+checkWin();
+
+});
+});
+
+function update(){
+document.getElementById("fill").style.width=
+Math.min((spaces/30)*100,100)+"%";
+
+document.getElementById("spaceText").innerText=
+spaces+" / 30 spaces";
 }
 
-makeClouds();
+function checkWin(){
+
+let missing=required.filter(r=>!essentials.has(r));
+
+if(missing.length===0 && spaces<=30){
+setTimeout(win,400);
+}
+}
+
+function win(){
+
+launchConfetti();
+
+document.getElementById("endScreen").classList.remove("hidden");
+
+document.getElementById("resultText").innerText=
+"Perfect Pack ✨ You remembered everything and stayed under space limit!";
+}
+
+function launchConfetti(){
+for(let i=0;i<60;i++){
+const p=document.createElement("div");
+p.className="p";
+p.style.left=Math.random()*100+"vw";
+p.style.background=["#ff9ccf","#8fd3ff","#ffe3f1","#c9f7ff"][Math.floor(Math.random()*4)];
+p.style.animationDuration=(0.8+Math.random())+"s";
+document.getElementById("confetti").appendChild(p);
+setTimeout(()=>p.remove(),1500);
+}
+}
 
 </script>
 
