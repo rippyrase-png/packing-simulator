@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Packing Simulator V2</title>
+
+<style>
+body {
+  font-family: Arial;
+  background: #f5f5f5;
+  display: flex;
+  gap: 15px;
+  padding: 15px;
+}
+
+.column {
+  background: white;
+  padding: 10px;
+  border-radius: 10px;
+  width: 25%;
+  min-height: 600px;
+}
+
+h2 { font-size: 16px; }
+
+.item {
+  padding: 8px;
+  margin: 5px;
+  background: #dbeafe;
+  border-radius: 8px;
+  cursor: grab;
+  user-select: none;
+}
+
+.dropzone {
+  min-height: 140px;
+  border: 2px dashed #aaa;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.small {
+  font-size: 12px;
+  color: gray;
+}
+
+meter {
+  width: 100%;
+}
+</style>
+</head>
+
+<body>
+
+<!-- LEFT: ITEMS -->
+<div class="column">
+<h2>👕 Clothes</h2>
+
+<div class="item" draggable="true" data-size="2">T-Shirt</div>
+<div class="item" draggable="true" data-size="3">Pants</div>
+<div class="item" draggable="true" data-size="2">Shorts</div>
+<div class="item" draggable="true" data-size="1">Underwear</div>
+<div class="item" draggable="true" data-size="1">Socks</div>
+<div class="item" draggable="true" data-size="3">Jacket</div>
+
+<p class="small">💡 Double-click items in bags to toggle Folded/Rolled</p>
+
+<h2>👗 Outfit Planner</h2>
+
+Day 1
+<div class="dropzone" id="day1"></div>
+
+Day 2
+<div class="dropzone" id="day2"></div>
+
+Day 3
+<div class="dropzone" id="day3"></div>
+</div>
+
+<!-- SUITCASE -->
+<div class="column">
+<h2>🧳 Suitcase</h2>
+<meter id="suitcaseMeter" value="0" max="20"></meter>
+<div class="dropzone" id="suitcase"></div>
+</div>
+
+<!-- RIGHT SIDE -->
+<div class="column">
+
+<h2>🎒 Carry-On</h2>
+<meter id="carryonMeter" value="0" max="12"></meter>
+<div class="dropzone" id="carryon"></div>
+
+<h2>🧴 Toiletry Bag</h2>
+<meter id="toiletryMeter" value="0" max="8"></meter>
+<div class="dropzone" id="toiletries"></div>
+
+</div>
+
+<script>
+
+let dragData = null;
+
+// drag start
+document.querySelectorAll(".item").forEach(item => {
+  item.addEventListener("dragstart", e => {
+    dragData = {
+      name: item.innerText,
+      size: parseInt(item.dataset.size),
+      mode: "Folded"
+    };
+  });
+});
+
+// dropzones
+document.querySelectorAll(".dropzone").forEach(zone => {
+
+  zone.addEventListener("dragover", e => e.preventDefault());
+
+  zone.addEventListener("drop", e => {
+    e.preventDefault();
+
+    const el = document.createElement("div");
+    el.className = "item";
+
+    el.innerText = dragData.name + " (" + dragData.mode + ")";
+    el.dataset.size = dragData.size;
+    el.dataset.mode = dragData.mode;
+
+    // toggle fold/roll on double click
+    el.addEventListener("dblclick", () => {
+      if (el.dataset.mode === "Folded") {
+        el.dataset.mode = "Rolled";
+      } else {
+        el.dataset.mode = "Folded";
+      }
+      el.innerText = dragData.name + " (" + el.dataset.mode + ")";
+    });
+
+    zone.appendChild(el);
+
+    updateMeters();
+  });
+});
+
+function calc(zoneId) {
+  let total = 0;
+  document.querySelectorAll("#" + zoneId + " .item").forEach(i => {
+    total += parseInt(i.dataset.size || 0);
+  });
+  return total;
+}
+
+function updateMeters() {
+  document.getElementById("suitcaseMeter").value = calc("suitcase");
+  document.getElementById("carryonMeter").value = calc("carryon");
+  document.getElementById("toiletryMeter").value = calc("toiletries");
+}
+
+// update meters when clicking anywhere (simple hack)
+setInterval(updateMeters, 500);
+
+</script>
+
+</body>
+</html>
