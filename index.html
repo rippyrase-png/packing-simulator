@@ -2,165 +2,166 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Packing Simulator V2</title>
+<title>Packing Planner ✈️</title>
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
+
 body {
-  font-family: Arial;
-  background: #f5f5f5;
-  display: flex;
-  gap: 15px;
-  padding: 15px;
+  margin: 0;
+  font-family: Inter, Arial;
+  background: linear-gradient(135deg, #fef6f9, #eef6ff);
+  color: #333;
 }
 
-.column {
-  background: white;
-  padding: 10px;
-  border-radius: 10px;
-  width: 25%;
-  min-height: 600px;
+header {
+  padding: 20px;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 600;
 }
 
-h2 { font-size: 16px; }
-
-.item {
-  padding: 8px;
-  margin: 5px;
-  background: #dbeafe;
-  border-radius: 8px;
-  cursor: grab;
-  user-select: none;
-}
-
-.dropzone {
-  min-height: 140px;
-  border: 2px dashed #aaa;
-  padding: 10px;
-  border-radius: 10px;
-}
-
-.small {
+.sub {
   font-size: 12px;
-  color: gray;
+  opacity: 0.7;
 }
 
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 12px;
+  justify-content: center;
+}
+
+/* CARD STYLE */
+.card {
+  background: white;
+  border-radius: 16px;
+  padding: 12px;
+  width: 45%;
+  min-width: 160px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+/* ITEM CHIPS */
+.item {
+  background: #f3f4f6;
+  padding: 8px;
+  margin: 6px 0;
+  border-radius: 12px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.item:hover {
+  transform: scale(1.02);
+  background: #e9eefc;
+}
+
+.selected {
+  outline: 2px solid #7aa7ff;
+  background: #e6f0ff;
+}
+
+/* SLOT AREA */
+.slot {
+  min-height: 90px;
+  border: 2px dashed #d0d0d0;
+  border-radius: 14px;
+  padding: 8px;
+  background: #fafafa;
+}
+
+/* METERS */
 meter {
   width: 100%;
+  height: 10px;
+}
+
+h2 {
+  font-size: 14px;
+  margin-bottom: 6px;
 }
 </style>
 </head>
 
 <body>
 
-<!-- LEFT: ITEMS -->
-<div class="column">
-<h2>👕 Clothes</h2>
+<header>
+✈️ Packing Planner
+<div class="sub">Tap items → tap bag → build your trip aesthetic</div>
+</header>
 
-<div class="item" draggable="true" data-size="2">T-Shirt</div>
-<div class="item" draggable="true" data-size="3">Pants</div>
-<div class="item" draggable="true" data-size="2">Shorts</div>
-<div class="item" draggable="true" data-size="1">Underwear</div>
-<div class="item" draggable="true" data-size="1">Socks</div>
-<div class="item" draggable="true" data-size="3">Jacket</div>
+<div class="container">
 
-<p class="small">💡 Double-click items in bags to toggle Folded/Rolled</p>
+<!-- ITEMS -->
+<div class="card">
+<h2>👕 Closet</h2>
 
-<h2>👗 Outfit Planner</h2>
+<div class="item" data-size="2">T-Shirt</div>
+<div class="item" data-size="3">Pants</div>
+<div class="item" data-size="2">Shorts</div>
+<div class="item" data-size="1">Socks</div>
+<div class="item" data-size="1">Underwear</div>
+<div class="item" data-size="3">Light Jacket</div>
 
-Day 1
-<div class="dropzone" id="day1"></div>
-
-Day 2
-<div class="dropzone" id="day2"></div>
-
-Day 3
-<div class="dropzone" id="day3"></div>
 </div>
 
 <!-- SUITCASE -->
-<div class="column">
+<div class="card">
 <h2>🧳 Suitcase</h2>
-<meter id="suitcaseMeter" value="0" max="20"></meter>
-<div class="dropzone" id="suitcase"></div>
+<meter id="suitcaseMeter" max="20" value="0"></meter>
+<div class="slot" id="suitcase"></div>
 </div>
 
-<!-- RIGHT SIDE -->
-<div class="column">
-
+<!-- CARRY ON -->
+<div class="card">
 <h2>🎒 Carry-On</h2>
-<meter id="carryonMeter" value="0" max="12"></meter>
-<div class="dropzone" id="carryon"></div>
+<meter id="carryMeter" max="12" value="0"></meter>
+<div class="slot" id="carry"></div>
+</div>
 
+<!-- TOILETRIES -->
+<div class="card">
 <h2>🧴 Toiletry Bag</h2>
-<meter id="toiletryMeter" value="0" max="8"></meter>
-<div class="dropzone" id="toiletries"></div>
+<meter id="toiletMeter" max="8" value="0"></meter>
+<div class="slot" id="toiletries"></div>
+</div>
 
 </div>
 
 <script>
 
-let dragData = null;
+let selected = null;
 
-// drag start
-document.querySelectorAll(".item").forEach(item => {
-  item.addEventListener("dragstart", e => {
-    dragData = {
-      name: item.innerText,
-      size: parseInt(item.dataset.size),
-      mode: "Folded"
-    };
+// select item
+document.querySelectorAll(".item").forEach(el => {
+  el.addEventListener("click", () => {
+    document.querySelectorAll(".item").forEach(i => i.classList.remove("selected"));
+    selected = el;
+    el.classList.add("selected");
   });
 });
 
-// dropzones
-document.querySelectorAll(".dropzone").forEach(zone => {
+// place item
+document.querySelectorAll(".slot").forEach(slot => {
+  slot.addEventListener("click", () => {
 
-  zone.addEventListener("dragover", e => e.preventDefault());
+    if (!selected) return;
 
-  zone.addEventListener("drop", e => {
-    e.preventDefault();
+    const clone = document.createElement("div");
+    clone.className = "item";
 
-    const el = document.createElement("div");
-    el.className = "item";
+    let mode = "Folded";
+    clone.innerText = selected.innerText + " (" + mode + ")";
+    clone.dataset.size = selected.dataset.size;
 
-    el.innerText = dragData.name + " (" + dragData.mode + ")";
-    el.dataset.size = dragData.size;
-    el.dataset.mode = dragData.mode;
-
-    // toggle fold/roll on double click
-    el.addEventListener("dblclick", () => {
-      if (el.dataset.mode === "Folded") {
-        el.dataset.mode = "Rolled";
-      } else {
-        el.dataset.mode = "Folded";
-      }
-      el.innerText = dragData.name + " (" + el.dataset.mode + ")";
+    clone.addEventListener("click", (e) => {
+      e.stopPropagation();
+      mode = (mode === "Folded") ? "Rolled" : "Folded";
+      clone.innerText = selected.innerText + " (" + mode + ")";
     });
 
-    zone.appendChild(el);
-
-    updateMeters();
-  });
-});
-
-function calc(zoneId) {
-  let total = 0;
-  document.querySelectorAll("#" + zoneId + " .item").forEach(i => {
-    total += parseInt(i.dataset.size || 0);
-  });
-  return total;
-}
-
-function updateMeters() {
-  document.getElementById("suitcaseMeter").value = calc("suitcase");
-  document.getElementById("carryonMeter").value = calc("carryon");
-  document.getElementById("toiletryMeter").value = calc("toiletries");
-}
-
-// update meters when clicking anywhere (simple hack)
-setInterval(updateMeters, 500);
-
-</script>
-
-</body>
-</html>
+    slot.append
